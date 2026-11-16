@@ -3,161 +3,401 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101827">
 <title>Kaggle GPU Runtime Monitor</title>
 
 <style>
-*{box-sizing:border-box}
+:root{
+ --bg:#101827;
+ --card:#1e293b;
+ --border:#334155;
+ --text:#f1f5f9;
+ --muted:#94a3b8;
+ --blue:#38bdf8;
+ --green:#4ade80;
+ --red:#fb7185;
+ --yellow:#facc15;
+}
+
+*{
+ box-sizing:border-box;
+}
+
+html{
+ min-height:100%;
+ background:var(--bg);
+}
 
 body{
  margin:0;
- padding:24px;
- background:#101827;
- color:#f1f5f9;
- font-family:Arial,sans-serif;
+ min-height:100vh;
+ min-height:100dvh;
+ padding:24px 18px calc(24px + env(safe-area-inset-bottom));
+ background:var(--bg);
+ color:var(--text);
+ font-family:Arial,Helvetica,sans-serif;
+ -webkit-font-smoothing:antialiased;
 }
 
 main{
- max-width:650px;
- margin:35px auto;
+ width:100%;
+ max-width:680px;
+ margin:30px auto;
+}
+
+header{
+ margin-bottom:24px;
 }
 
 h1{
- font-size:26px;
- margin-bottom:8px;
+ font-size:clamp(23px,5vw,29px);
+ line-height:1.25;
+ margin:0 0 9px;
+ letter-spacing:-.5px;
+}
+
+.subtitle{
+ color:var(--muted);
+ font-size:13px;
+ line-height:1.5;
+ margin:0;
 }
 
 .card{
- background:#1e293b;
- padding:22px;
- border-radius:16px;
- margin-top:18px;
- border:1px solid #334155;
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:18px;
+ padding:23px;
+ margin-bottom:16px;
+ min-width:0;
 }
 
-.muted{
- color:#94a3b8;
- font-size:13px;
+.section-title{
+ color:var(--muted);
+ font-size:11px;
+ font-weight:700;
+ letter-spacing:1.2px;
+ margin-bottom:10px;
 }
 
 .status{
- font-size:23px;
- font-weight:bold;
- margin:10px 0 22px;
+ font-size:25px;
+ font-weight:700;
+ margin:0 0 23px;
 }
 
-.green{color:#4ade80}
-.red{color:#fb7185}
-.yellow{color:#facc15}
+.green{color:var(--green)}
+.red{color:var(--red)}
+.yellow{color:var(--yellow)}
 
-.value{
- font-size:19px;
- margin:8px 0 20px;
+.info-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:20px 16px;
+}
+
+.info-item{
+ min-width:0;
+}
+
+.info-label{
+ color:var(--muted);
+ font-size:11px;
+ letter-spacing:.7px;
+ font-weight:700;
+ margin-bottom:8px;
+}
+
+.info-value{
+ font-size:15px;
+ line-height:1.5;
  overflow-wrap:anywhere;
+ word-break:break-word;
+}
+
+.session-id{
+ font-family:monospace;
+}
+
+.timer-value{
+ font-size:clamp(27px,7vw,35px);
+ font-weight:700;
+ letter-spacing:-1px;
+ margin:4px 0 21px;
+ font-variant-numeric:tabular-nums;
+}
+
+.progress-header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ margin-bottom:10px;
+}
+
+.progress-percent{
+ color:var(--blue);
+ font-size:13px;
+ font-weight:700;
 }
 
 .track{
- height:12px;
+ width:100%;
+ height:11px;
  background:#334155;
- border-radius:20px;
+ border-radius:30px;
  overflow:hidden;
 }
 
 .bar{
  height:100%;
  width:0%;
- background:#38bdf8;
- transition:width .5s;
+ background:var(--blue);
+ border-radius:30px;
+ transition:width .4s ease;
 }
 
-button{
- background:#2563eb;
- color:white;
- border:0;
- padding:12px 18px;
- border-radius:8px;
- margin-top:18px;
- cursor:pointer;
- font-size:14px;
+.timer-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:16px;
+ margin-top:23px;
 }
 
-button:hover{background:#1d4ed8}
+.timer-box{
+ background:#172337;
+ border:1px solid #334155;
+ border-radius:12px;
+ padding:15px;
+ min-width:0;
+}
 
-.error{
- color:#fb7185;
+.timer-box .info-value{
+ font-size:18px;
+ font-weight:700;
+ font-variant-numeric:tabular-nums;
+}
+
+.warning{
+ color:var(--yellow);
+ font-size:13px;
+ margin-top:16px;
+ line-height:1.5;
 }
 
 .footer{
- margin-top:20px;
  text-align:center;
+ padding:5px 0 12px;
 }
 
+.footer p{
+ font-size:12px;
+ color:var(--muted);
+ line-height:1.6;
+ overflow-wrap:anywhere;
+}
+
+button{
+ width:100%;
+ min-height:50px;
+ padding:14px 18px;
+ margin-top:12px;
+ border:0;
+ border-radius:12px;
+ background:#2563eb;
+ color:white;
+ font-size:15px;
+ font-weight:700;
+ cursor:pointer;
+ touch-action:manipulation;
+}
+
+button:active{
+ transform:scale(.99);
+}
+
+button:disabled{
+ opacity:.65;
+ cursor:wait;
+}
+
+.error{color:var(--red)!important}
+
+@media(max-width:480px){
+
+ body{
+  padding:18px 13px calc(18px + env(safe-area-inset-bottom));
+ }
+
+ main{
+  margin:15px auto;
+ }
+
+ header{
+  margin-bottom:20px;
+ }
+
+ h1{
+  font-size:23px;
+ }
+
+ .card{
+  padding:19px 17px;
+  border-radius:15px;
+  margin-bottom:13px;
+ }
+
+ .status{
+  font-size:23px;
+  margin-bottom:21px;
+ }
+
+ .info-grid{
+  grid-template-columns:1fr;
+  gap:17px;
+ }
+
+ .info-value{
+  font-size:15px;
+ }
+
+ .timer-value{
+  font-size:30px;
+ }
+
+ .timer-grid{
+  grid-template-columns:1fr;
+  gap:12px;
+  margin-top:20px;
+ }
+
+ .timer-box{
+  padding:15px;
+ }
+
+ .timer-box .info-value{
+  font-size:20px;
+ }
+
+ button{
+  min-height:52px;
+  font-size:16px;
+ }
+
+ .footer{
+  padding-bottom:10px;
+ }
+}
+
+@media(min-width:481px) and (max-width:700px){
+ main{margin:20px auto}
+ .card{padding:20px}
+}
+
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{
+  transition:none!important;
+  scroll-behavior:auto!important;
+ }
+}
 </style>
 </head>
 
 <body>
 <main>
 
-<h1>⚡ Kaggle GPU Runtime Monitor</h1>
-<p class="muted">
- External dashboard · Automatically refreshes every 10 seconds
-</p>
+<header>
+ <h1>⚡ Kaggle GPU Runtime Monitor</h1>
+ <p class="subtitle">
+  External dashboard · Auto-refreshes every 10 seconds
+ </p>
+</header>
 
 <div class="card">
 
- <div class="muted">SESSION STATUS</div>
+ <div class="section-title">SESSION STATUS</div>
  <div id="status" class="status yellow">Connecting...</div>
 
- <div class="muted">SESSION ID</div>
- <div id="session" class="value">—</div>
+ <div class="info-grid">
 
- <div class="muted">STARTED AT</div>
- <div id="started" class="value">—</div>
+  <div class="info-item">
+   <div class="info-label">SESSION ID</div>
+   <div id="session" class="info-value session-id">—</div>
+  </div>
 
- <div class="muted">LAST HEARTBEAT</div>
- <div id="heartbeat" class="value">—</div>
+  <div class="info-item">
+   <div class="info-label">MAXIMUM RUNTIME</div>
+   <div id="maximumTop" class="info-value">4 hours</div>
+  </div>
 
+  <div class="info-item">
+   <div class="info-label">STARTED AT</div>
+   <div id="started" class="info-value">—</div>
+  </div>
+
+  <div class="info-item">
+   <div class="info-label">LAST HEARTBEAT</div>
+   <div id="heartbeat" class="info-value">—</div>
+  </div>
+
+ </div>
 </div>
 
 <div class="card">
 
- <div class="muted">ELAPSED RUNTIME</div>
- <div id="elapsed" class="value">—</div>
+ <div class="section-title">ELAPSED RUNTIME</div>
+ <div id="elapsed" class="timer-value">—</div>
+
+ <div class="progress-header">
+  <div class="section-title" style="margin:0">RUNTIME USAGE</div>
+  <div id="percentage" class="progress-percent">0%</div>
+ </div>
 
  <div class="track">
   <div id="bar" class="bar"></div>
  </div>
 
- <div class="muted" style="margin-top:22px">
-  TIME REMAINING
+ <div class="timer-grid">
+
+  <div class="timer-box">
+   <div class="info-label">TIME REMAINING</div>
+   <div id="remaining" class="info-value">—</div>
+  </div>
+
+  <div class="timer-box">
+   <div class="info-label">MAXIMUM RUNTIME</div>
+   <div id="maximum" class="info-value">4 hours</div>
+  </div>
+
  </div>
- <div id="remaining" class="value">—</div>
 
- <div class="muted">MAXIMUM RUNTIME</div>
- <div id="maximum" class="value">4 hours</div>
-
- <div id="limitWarning" class="muted"></div>
-
+ <div id="warning" class="warning"></div>
 </div>
 
 <div class="footer">
- <p id="updated" class="muted">Waiting for Kaggle data...</p>
- <p id="connection" class="muted">Connecting to GitHub...</p>
- <button onclick="loadStatus()">↻ Refresh now</button>
+ <p id="updated">Waiting for data...</p>
+ <p id="connection">Connecting to GitHub...</p>
+
+ <button id="refreshButton" type="button">
+  ↻ Refresh now
+ </button>
 </div>
 
 </main>
 
 <script>
+"use strict";
 
 const STATUS_URL="./status.json";
 
-let sessionStart=null;
-let lastData=null;
+let statusData=null;
+let startedTimestamp=null;
+let fetching=false;
+
+const $=id=>document.getElementById(id);
 
 function duration(seconds){
-
  if(!Number.isFinite(seconds)) return "—";
 
  seconds=Math.max(0,Math.floor(seconds));
@@ -169,117 +409,106 @@ function duration(seconds){
  return `${h}h ${m}m ${s}s`;
 }
 
-function parseTime(value){
-
+function parseTimestamp(value){
  if(!value) return null;
 
- const time=Date.parse(value);
+ const timestamp=Date.parse(value);
 
- return Number.isFinite(time)?time:null;
+ return Number.isFinite(timestamp)?timestamp:null;
 }
 
-function show(id,value){
+function formatTimestamp(value){
+ const timestamp=parseTimestamp(value);
 
- document.getElementById(id).textContent=value;
+ return timestamp
+  ?new Date(timestamp).toLocaleString()
+  :"Not available";
 }
 
-function render(){
+function renderDashboard(){
+ if(!statusData) return;
 
- if(!lastData) return;
+ const d=statusData;
 
- const d=lastData;
+ const state=String(d.status||"UNKNOWN")
+  .trim().toUpperCase();
 
- const state=String(d.status||"unknown")
-  .trim()
-  .toLowerCase();
+ const active=["ACTIVE","RUNNING"].includes(state);
 
- const active=["active","running"].includes(state);
+ $("status").textContent=state;
+ $("status").className="status "+(active?"green":"red");
 
- const status=document.getElementById("status");
+ $("session").textContent=d.session_id||"No active session";
 
- status.textContent=d.status||"Unknown";
-
- status.className="status "+
-  (active?"green":state==="unknown"?"yellow":"red");
-
- show("session",d.session_id||"No active session");
-
- const start=parseTime(d.started_at||d.started);
-
- if(start){
-  sessionStart=start;
-  show("started",new Date(start).toLocaleString());
- }else{
-  show("started","Not provided by Kaggle yet");
- }
+ $("started").textContent=startedTimestamp
+  ?new Date(startedTimestamp).toLocaleString()
+  :"Not provided";
 
  const heartbeat=d.last_heartbeat||d.last_updated;
+ $("heartbeat").textContent=formatTimestamp(heartbeat);
 
- show(
-  "heartbeat",
-  heartbeat?new Date(heartbeat).toLocaleString():"Not available"
- );
+ const maxHours=Number(d.maximum_runtime_hours)>0
+  ?Number(d.maximum_runtime_hours):4;
 
- const maxHours=Number(d.maximum_runtime_hours)||4;
  const maxSeconds=maxHours*3600;
 
- let elapsed=Number(d.elapsed_seconds);
+ let elapsed;
 
- if(!Number.isFinite(elapsed)){
-  if(sessionStart){
-   elapsed=Math.max(0,(Date.now()-sessionStart)/1000);
-  }else{
-   elapsed=NaN;
-  }
+ if(active&&startedTimestamp!==null){
+  elapsed=Math.max(0,(Date.now()-startedTimestamp)/1000);
+ }else if(Number.isFinite(Number(d.elapsed_seconds))){
+  elapsed=Number(d.elapsed_seconds);
+ }else{
+  elapsed=NaN;
  }
 
- let remaining=Number(d.remaining_seconds);
-
- if(!Number.isFinite(remaining)&&Number.isFinite(elapsed)){
-  remaining=Math.max(0,maxSeconds-elapsed);
- }
-
- show("elapsed",duration(elapsed));
-
- show(
-  "remaining",
-  Number.isFinite(remaining)?duration(remaining):"Waiting for start time"
- );
-
- show("maximum",maxHours+" hours");
+ const remaining=Number.isFinite(elapsed)
+  ?Math.max(0,maxSeconds-elapsed)
+  :NaN;
 
  const percentage=Number.isFinite(elapsed)
   ?Math.min(100,Math.max(0,elapsed/maxSeconds*100))
   :0;
 
- document.getElementById("bar").style.width=percentage+"%";
-
- const warning=document.getElementById("limitWarning");
+ $("elapsed").textContent=duration(elapsed);
+ $("remaining").textContent=duration(remaining);
+ $("maximum").textContent=maxHours+" hours";
+ $("maximumTop").textContent=maxHours+" hours";
+ $("percentage").textContent=percentage.toFixed(1)+"%";
+ $("bar").style.width=percentage+"%";
 
  if(active&&Number.isFinite(remaining)&&remaining<=0){
-  warning.textContent="⚠️ Maximum runtime reached";
-  warning.className="red";
+  $("warning").textContent="⚠ Maximum runtime reached.";
  }else if(active&&Number.isFinite(remaining)&&remaining<=1800){
-  warning.textContent="⚠️ Less than 30 minutes remaining";
-  warning.className="yellow";
+  $("warning").textContent="⚠ Less than 30 minutes remaining.";
  }else{
-  warning.textContent="";
-  warning.className="muted";
+  $("warning").textContent="";
  }
-
- show("updated","Dashboard refreshed: "+new Date().toLocaleString());
 }
 
 async function loadStatus(){
 
- const connection=document.getElementById("connection");
+ if(fetching) return;
+
+ fetching=true;
+
+ const button=$("refreshButton");
+
+ button.disabled=true;
+ button.textContent="Refreshing...";
+
+ $("connection").textContent="Fetching latest GitHub data...";
 
  try{
 
-  const response=await fetch(
-   STATUS_URL+"?t="+Date.now(),
-   {cache:"no-store"}
-  );
+  const url=STATUS_URL+"?nocache="+
+   Date.now()+"-"+Math.random().toString(36).slice(2);
+
+  const response=await fetch(url,{
+   method:"GET",
+   cache:"no-store",
+   headers:{"Accept":"application/json"}
+  });
 
   if(!response.ok){
    throw new Error("HTTP "+response.status);
@@ -287,35 +516,54 @@ async function loadStatus(){
 
   const data=await response.json();
 
-  if(!data||typeof data!=="object"){
-   throw new Error("Invalid status data");
+  if(!data||typeof data!=="object"||Array.isArray(data)){
+   throw new Error("Invalid status.json");
   }
 
-  lastData=data;
+  statusData=data;
 
-  render();
+  startedTimestamp=parseTimestamp(
+   data.started_at||data.started||data.start_time
+  );
 
-  connection.textContent="✓ Connected to GitHub";
-  connection.className="muted";
+  renderDashboard();
+
+  $("connection").textContent="✓ Connected to GitHub";
+  $("connection").className="muted";
+
+  $("updated").textContent=
+   "Last dashboard refresh: "+new Date().toLocaleString();
 
  }catch(error){
 
-  connection.textContent="Connection error: "+error.message;
-  connection.className="error";
+  $("connection").textContent="Connection error: "+error.message;
+  $("connection").className="error";
 
-  if(!lastData){
-   show("status","Waiting for Kaggle data");
-   document.getElementById("status").className="status yellow";
+  if(!statusData){
+   $("status").textContent="Unable to load status";
+   $("status").className="status red";
   }
 
+ }finally{
+
+  fetching=false;
+  button.disabled=false;
+  button.textContent="↻ Refresh now";
  }
 }
+
+$("refreshButton").addEventListener("click",loadStatus);
 
 loadStatus();
 
 setInterval(loadStatus,10000);
+setInterval(renderDashboard,1000);
 
-setInterval(render,1000);
+document.addEventListener("visibilitychange",()=>{
+ if(!document.hidden) loadStatus();
+});
+
+window.addEventListener("pageshow",loadStatus);
 
 </script>
 </body>
