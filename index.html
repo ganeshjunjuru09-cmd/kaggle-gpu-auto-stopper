@@ -3,303 +3,337 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#101827">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1220">
 <title>Kaggle GPU Runtime Monitor</title>
 
 <style>
-:root{
- --bg:#101827;
- --card:#1e293b;
- --border:#334155;
- --text:#f1f5f9;
- --muted:#94a3b8;
- --blue:#38bdf8;
- --green:#4ade80;
- --red:#fb7185;
- --yellow:#facc15;
+:root {
+  --bg:#0b1220;
+  --panel:#131e30;
+  --panel2:#19263a;
+  --border:#26364d;
+  --text:#f1f5f9;
+  --muted:#8fa1b8;
+  --green:#22c55e;
+  --red:#ef4444;
+  --yellow:#f59e0b;
+  --blue:#60a5fa;
 }
 
-*{
- box-sizing:border-box;
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+  min-height:100vh;
 }
 
-html{
- min-height:100%;
- background:var(--bg);
+main {
+  max-width:1050px;
+  margin:auto;
+  padding:28px 20px 45px;
 }
 
-body{
- margin:0;
- min-height:100vh;
- min-height:100dvh;
- padding:24px 18px calc(24px + env(safe-area-inset-bottom));
- background:var(--bg);
- color:var(--text);
- font-family:Arial,Helvetica,sans-serif;
- -webkit-font-smoothing:antialiased;
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:28px;
+  flex-wrap:wrap;
 }
 
-main{
- width:100%;
- max-width:680px;
- margin:30px auto;
-}
-
-header{
- margin-bottom:24px;
-}
-
-h1{
- font-size:clamp(23px,5vw,29px);
- line-height:1.25;
- margin:0 0 9px;
- letter-spacing:-.5px;
-}
-
-.subtitle{
- color:var(--muted);
- font-size:13px;
- line-height:1.5;
- margin:0;
-}
-
-.card{
- background:var(--card);
- border:1px solid var(--border);
- border-radius:18px;
- padding:23px;
- margin-bottom:16px;
- min-width:0;
-}
-
-.section-title{
- color:var(--muted);
- font-size:11px;
- font-weight:700;
- letter-spacing:1.2px;
- margin-bottom:10px;
-}
-
-.status{
- font-size:25px;
- font-weight:700;
- margin:0 0 23px;
-}
-
-.green{color:var(--green)}
-.red{color:var(--red)}
-.yellow{color:var(--yellow)}
-
-.info-grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:20px 16px;
-}
-
-.info-item{
- min-width:0;
-}
-
-.info-label{
- color:var(--muted);
- font-size:11px;
- letter-spacing:.7px;
- font-weight:700;
- margin-bottom:8px;
-}
-
-.info-value{
- font-size:15px;
- line-height:1.5;
- overflow-wrap:anywhere;
- word-break:break-word;
-}
-
-.session-id{
- font-family:monospace;
-}
-
-.timer-value{
- font-size:clamp(27px,7vw,35px);
- font-weight:700;
- letter-spacing:-1px;
- margin:4px 0 21px;
- font-variant-numeric:tabular-nums;
-}
-
-.progress-header{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:10px;
- margin-bottom:10px;
-}
-
-.progress-percent{
- color:var(--blue);
- font-size:13px;
- font-weight:700;
-}
-
-.track{
- width:100%;
- height:11px;
- background:#334155;
- border-radius:30px;
- overflow:hidden;
-}
-
-.bar{
- height:100%;
- width:0%;
- background:var(--blue);
- border-radius:30px;
- transition:width .4s ease;
-}
-
-.timer-grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:16px;
- margin-top:23px;
-}
-
-.timer-box{
- background:#172337;
- border:1px solid #334155;
- border-radius:12px;
- padding:15px;
- min-width:0;
-}
-
-.timer-box .info-value{
- font-size:18px;
- font-weight:700;
- font-variant-numeric:tabular-nums;
-}
-
-.warning{
- color:var(--yellow);
- font-size:13px;
- margin-top:16px;
- line-height:1.5;
-}
-
-.footer{
- text-align:center;
- padding:5px 0 12px;
-}
-
-.footer p{
- font-size:12px;
- color:var(--muted);
- line-height:1.6;
- overflow-wrap:anywhere;
-}
-
-button{
- width:100%;
- min-height:50px;
- padding:14px 18px;
- margin-top:12px;
- border:0;
- border-radius:12px;
- background:#2563eb;
- color:white;
- font-size:15px;
- font-weight:700;
- cursor:pointer;
- touch-action:manipulation;
-}
-
-button:active{
- transform:scale(.99);
-}
-
-button:disabled{
- opacity:.65;
- cursor:wait;
-}
-
-.error{color:var(--red)!important}
-
-@media(max-width:480px){
-
- body{
-  padding:18px 13px calc(18px + env(safe-area-inset-bottom));
- }
-
- main{
-  margin:15px auto;
- }
-
- header{
-  margin-bottom:20px;
- }
-
- h1{
-  font-size:23px;
- }
-
- .card{
-  padding:19px 17px;
-  border-radius:15px;
-  margin-bottom:13px;
- }
-
- .status{
-  font-size:23px;
-  margin-bottom:21px;
- }
-
- .info-grid{
-  grid-template-columns:1fr;
-  gap:17px;
- }
-
- .info-value{
-  font-size:15px;
- }
-
- .timer-value{
-  font-size:30px;
- }
-
- .timer-grid{
-  grid-template-columns:1fr;
+.brand {
+  display:flex;
+  align-items:center;
   gap:12px;
-  margin-top:20px;
- }
-
- .timer-box{
-  padding:15px;
- }
-
- .timer-box .info-value{
-  font-size:20px;
- }
-
- button{
-  min-height:52px;
-  font-size:16px;
- }
-
- .footer{
-  padding-bottom:10px;
- }
 }
 
-@media(min-width:481px) and (max-width:700px){
- main{margin:20px auto}
- .card{padding:20px}
+.logo {
+  width:44px;
+  height:44px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:#203b60;
+  font-size:23px;
 }
 
-@media(prefers-reduced-motion:reduce){
- *,*::before,*::after{
-  transition:none!important;
-  scroll-behavior:auto!important;
- }
+h1 {
+  font-size:21px;
+  margin:0;
+}
+
+.subtitle {
+  font-size:12px;
+  color:var(--muted);
+  margin-top:5px;
+}
+
+.header-right {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.connection {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.dot {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--green);
+}
+
+button {
+  cursor:pointer;
+  border:0;
+  border-radius:9px;
+  padding:11px 16px;
+  font-weight:600;
+  color:white;
+  background:#2563eb;
+  font-size:13px;
+}
+
+button:disabled {
+  cursor:not-allowed;
+  opacity:.45;
+}
+
+button:active:not(:disabled) {
+  transform:scale(.97);
+}
+
+.hero {
+  background:linear-gradient(120deg,#172a43,#172239);
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:25px;
+  margin-bottom:17px;
+}
+
+.hero-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+.eyebrow {
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:1.3px;
+  font-weight:700;
+}
+
+.status {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius:30px;
+  padding:8px 13px;
+  background:#123d2a;
+  color:#4ade80;
+  font-size:12px;
+  font-weight:700;
+}
+
+.status.stopped {
+  background:#3c2025;
+  color:#f87171;
+}
+
+.status.unknown {
+  background:#3a301b;
+  color:#fbbf24;
+}
+
+.session-id {
+  margin-top:19px;
+  font-size:13px;
+  color:var(--muted);
+  word-break:break-all;
+}
+
+.session-id strong {
+  color:var(--text);
+  margin-left:6px;
+}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:17px;
+}
+
+.card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:21px;
+  min-width:0;
+}
+
+.card-label {
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:16px;
+}
+
+.metric {
+  font-size:clamp(25px,4vw,35px);
+  font-weight:750;
+  letter-spacing:-1px;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+.metric.green { color:var(--green); }
+.metric.blue { color:var(--blue); }
+.metric.yellow { color:var(--yellow); }
+
+.card-note {
+  font-size:11px;
+  color:var(--muted);
+  margin-top:10px;
+}
+
+.progress-section {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:22px;
+  margin-bottom:17px;
+}
+
+.section-title {
+  font-size:14px;
+  font-weight:700;
+  margin-bottom:19px;
+}
+
+.progress-info {
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:var(--muted);
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.track {
+  height:10px;
+  background:#263449;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.fill {
+  height:100%;
+  width:0%;
+  background:var(--blue);
+  border-radius:20px;
+  transition:width .4s ease;
+}
+
+.details {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:17px;
+}
+
+.detail {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  min-width:0;
+}
+
+.detail-label {
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:8px;
+}
+
+.detail-value {
+  font-size:13px;
+  font-weight:600;
+  overflow-wrap:anywhere;
+}
+
+.controls {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:22px;
+  margin-bottom:17px;
+}
+
+.control-buttons {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.start-btn { background:#166534; }
+.stop-btn { background:#991b1b; }
+
+.notice {
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.6;
+  margin-top:14px;
+}
+
+footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  padding-top:18px;
+}
+
+@media(max-width:650px) {
+  main { padding:20px 14px 35px; }
+
+  header { align-items:flex-start; }
+
+  .header-right {
+    width:100%;
+    justify-content:space-between;
+  }
+
+  h1 { font-size:18px; }
+
+  .hero { padding:20px; }
+
+  .stats {
+    grid-template-columns:1fr;
+    gap:11px;
+  }
+
+  .card {
+    padding:17px;
+  }
+
+  .metric { font-size:29px; }
+
+  .details { grid-template-columns:1fr; }
+
+  .control-buttons { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -308,262 +342,357 @@ button:disabled{
 <main>
 
 <header>
- <h1>⚡ Kaggle GPU Runtime Monitor</h1>
- <p class="subtitle">
-  External dashboard · Auto-refreshes every 10 seconds
- </p>
+  <div class="brand">
+    <div class="logo">⚡</div>
+    <div>
+      <h1>Kaggle GPU Monitor</h1>
+      <div class="subtitle">External runtime monitoring dashboard</div>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="connection">
+      <span class="dot" id="connectionDot"></span>
+      <span id="connectionText">Connecting...</span>
+    </div>
+    <button id="refreshBtn" onclick="loadStatus()">
+      ↻ Refresh
+    </button>
+  </div>
 </header>
 
-<div class="card">
-
- <div class="section-title">SESSION STATUS</div>
- <div id="status" class="status yellow">Connecting...</div>
-
- <div class="info-grid">
-
-  <div class="info-item">
-   <div class="info-label">SESSION ID</div>
-   <div id="session" class="info-value session-id">—</div>
+<section class="hero">
+  <div class="hero-top">
+    <div class="eyebrow">SESSION STATUS</div>
+    <div class="status unknown" id="statusBadge">
+      <span>●</span> UNKNOWN
+    </div>
   </div>
 
-  <div class="info-item">
-   <div class="info-label">MAXIMUM RUNTIME</div>
-   <div id="maximumTop" class="info-value">4 hours</div>
+  <div class="session-id">
+    SESSION ID:
+    <strong id="sessionId">Waiting for data...</strong>
+  </div>
+</section>
+
+<section class="stats">
+
+  <div class="card">
+    <div class="card-label">ELAPSED RUNTIME</div>
+    <div class="metric blue" id="elapsed">--:--:--</div>
+    <div class="card-note">Time since session started</div>
   </div>
 
-  <div class="info-item">
-   <div class="info-label">STARTED AT</div>
-   <div id="started" class="info-value">—</div>
+  <div class="card">
+    <div class="card-label">TIME REMAINING</div>
+    <div class="metric green" id="remaining">--:--:--</div>
+    <div class="card-note">Based on maximum runtime</div>
   </div>
 
-  <div class="info-item">
-   <div class="info-label">LAST HEARTBEAT</div>
-   <div id="heartbeat" class="info-value">—</div>
+  <div class="card">
+    <div class="card-label">MAXIMUM RUNTIME</div>
+    <div class="metric yellow" id="maximum">04:00:00</div>
+    <div class="card-note">Configured session limit</div>
   </div>
 
- </div>
-</div>
+</section>
 
-<div class="card">
+<section class="progress-section">
+  <div class="section-title">Session Progress</div>
 
- <div class="section-title">ELAPSED RUNTIME</div>
- <div id="elapsed" class="timer-value">—</div>
-
- <div class="progress-header">
-  <div class="section-title" style="margin:0">RUNTIME USAGE</div>
-  <div id="percentage" class="progress-percent">0%</div>
- </div>
-
- <div class="track">
-  <div id="bar" class="bar"></div>
- </div>
-
- <div class="timer-grid">
-
-  <div class="timer-box">
-   <div class="info-label">TIME REMAINING</div>
-   <div id="remaining" class="info-value">—</div>
+  <div class="progress-info">
+    <span>Runtime used</span>
+    <strong id="progressText">0%</strong>
   </div>
 
-  <div class="timer-box">
-   <div class="info-label">MAXIMUM RUNTIME</div>
-   <div id="maximum" class="info-value">4 hours</div>
+  <div class="track">
+    <div class="fill" id="progressFill"></div>
+  </div>
+</section>
+
+<section class="details">
+
+  <div class="detail">
+    <div class="detail-label">SESSION STARTED</div>
+    <div class="detail-value" id="started">--</div>
   </div>
 
- </div>
+  <div class="detail">
+    <div class="detail-label">LAST HEARTBEAT</div>
+    <div class="detail-value" id="heartbeat">--</div>
+  </div>
 
- <div id="warning" class="warning"></div>
-</div>
+  <div class="detail">
+    <div class="detail-label">LAST UPDATED</div>
+    <div class="detail-value" id="updated">--</div>
+  </div>
 
-<div class="footer">
- <p id="updated">Waiting for data...</p>
- <p id="connection">Connecting to GitHub...</p>
+  <div class="detail">
+    <div class="detail-label">DATA SOURCE</div>
+    <div class="detail-value">GitHub status.json</div>
+  </div>
 
- <button id="refreshButton" type="button">
-  ↻ Refresh now
- </button>
-</div>
+</section>
+
+<section class="controls">
+  <div class="section-title">Kaggle Session Controls</div>
+
+  <div class="control-buttons">
+    <button class="start-btn" disabled title="Backend integration coming later">
+      ▶ START KAGGLE
+    </button>
+
+    <button class="stop-btn" disabled title="Backend integration coming later">
+      ■ STOP KAGGLE
+    </button>
+  </div>
+
+  <div class="notice">
+    Controls will be enabled after secure GitHub-to-Kaggle
+    integration. These buttons do not currently execute commands.
+  </div>
+</section>
+
+<footer>
+  Kaggle GPU Runtime Monitor · Automatic refresh every 10 seconds
+  <br><br>
+  <span id="lastFetch">Waiting for first update</span>
+</footer>
 
 </main>
 
 <script>
-"use strict";
+const STATUS_URL = "./status.json";
+const REFRESH_INTERVAL = 10000;
 
-const STATUS_URL="./status.json";
+let session = null;
+let elapsedAtFetch = 0;
+let fetchTime = 0;
+let maxSeconds = 14400;
+let refreshTimer = null;
 
-let statusData=null;
-let startedTimestamp=null;
-let fetching=false;
+function parseDuration(value) {
+  if (value == null) return null;
 
-const $=id=>document.getElementById(id);
-
-function duration(seconds){
- if(!Number.isFinite(seconds)) return "—";
-
- seconds=Math.max(0,Math.floor(seconds));
-
- const h=Math.floor(seconds/3600);
- const m=Math.floor((seconds%3600)/60);
- const s=seconds%60;
-
- return `${h}h ${m}m ${s}s`;
-}
-
-function parseTimestamp(value){
- if(!value) return null;
-
- const timestamp=Date.parse(value);
-
- return Number.isFinite(timestamp)?timestamp:null;
-}
-
-function formatTimestamp(value){
- const timestamp=parseTimestamp(value);
-
- return timestamp
-  ?new Date(timestamp).toLocaleString()
-  :"Not available";
-}
-
-function renderDashboard(){
- if(!statusData) return;
-
- const d=statusData;
-
- const state=String(d.status||"UNKNOWN")
-  .trim().toUpperCase();
-
- const active=["ACTIVE","RUNNING"].includes(state);
-
- $("status").textContent=state;
- $("status").className="status "+(active?"green":"red");
-
- $("session").textContent=d.session_id||"No active session";
-
- $("started").textContent=startedTimestamp
-  ?new Date(startedTimestamp).toLocaleString()
-  :"Not provided";
-
- const heartbeat=d.last_heartbeat||d.last_updated;
- $("heartbeat").textContent=formatTimestamp(heartbeat);
-
- const maxHours=Number(d.maximum_runtime_hours)>0
-  ?Number(d.maximum_runtime_hours):4;
-
- const maxSeconds=maxHours*3600;
-
- let elapsed;
-
- if(active&&startedTimestamp!==null){
-  elapsed=Math.max(0,(Date.now()-startedTimestamp)/1000);
- }else if(Number.isFinite(Number(d.elapsed_seconds))){
-  elapsed=Number(d.elapsed_seconds);
- }else{
-  elapsed=NaN;
- }
-
- const remaining=Number.isFinite(elapsed)
-  ?Math.max(0,maxSeconds-elapsed)
-  :NaN;
-
- const percentage=Number.isFinite(elapsed)
-  ?Math.min(100,Math.max(0,elapsed/maxSeconds*100))
-  :0;
-
- $("elapsed").textContent=duration(elapsed);
- $("remaining").textContent=duration(remaining);
- $("maximum").textContent=maxHours+" hours";
- $("maximumTop").textContent=maxHours+" hours";
- $("percentage").textContent=percentage.toFixed(1)+"%";
- $("bar").style.width=percentage+"%";
-
- if(active&&Number.isFinite(remaining)&&remaining<=0){
-  $("warning").textContent="⚠ Maximum runtime reached.";
- }else if(active&&Number.isFinite(remaining)&&remaining<=1800){
-  $("warning").textContent="⚠ Less than 30 minutes remaining.";
- }else{
-  $("warning").textContent="";
- }
-}
-
-async function loadStatus(){
-
- if(fetching) return;
-
- fetching=true;
-
- const button=$("refreshButton");
-
- button.disabled=true;
- button.textContent="Refreshing...";
-
- $("connection").textContent="Fetching latest GitHub data...";
-
- try{
-
-  const url=STATUS_URL+"?nocache="+
-   Date.now()+"-"+Math.random().toString(36).slice(2);
-
-  const response=await fetch(url,{
-   method:"GET",
-   cache:"no-store",
-   headers:{"Accept":"application/json"}
-  });
-
-  if(!response.ok){
-   throw new Error("HTTP "+response.status);
+  if (typeof value === "number") {
+    return value;
   }
 
-  const data=await response.json();
+  const s = String(value).trim().toLowerCase();
 
-  if(!data||typeof data!=="object"||Array.isArray(data)){
-   throw new Error("Invalid status.json");
+  if (/^\d+(\.\d+)?$/.test(s)) {
+    return Number(s);
   }
 
-  statusData=data;
+  let total = 0;
+  const regex = /(\d+(?:\.\d+)?)\s*(days?|d|hours?|hrs?|h|minutes?|mins?|m|seconds?|secs?|s)/g;
+  let match;
 
-  startedTimestamp=parseTimestamp(
-   data.started_at||data.started||data.start_time
+  while ((match = regex.exec(s)) !== null) {
+    const n = Number(match[1]);
+    const unit = match[2];
+
+    if (unit.startsWith("d")) total += n * 86400;
+    else if (unit.startsWith("h")) total += n * 3600;
+    else if (unit.startsWith("m")) total += n * 60;
+    else total += n;
+  }
+
+  return total > 0 ? total : null;
+}
+
+function formatTime(seconds) {
+  seconds = Math.max(0, Math.floor(seconds));
+
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+
+  return [h,m,s].map(v => String(v).padStart(2,"0")).join(":");
+}
+
+function formatDate(value) {
+  if (!value) return "--";
+
+  const d = new Date(value);
+
+  if (isNaN(d.getTime())) return String(value);
+
+  return d.toLocaleString();
+}
+
+function getElapsed(data) {
+  const direct = parseDuration(
+    data.elapsed_seconds ??
+    data.elapsed_runtime_seconds
   );
 
-  renderDashboard();
+  if (direct !== null) return direct;
 
-  $("connection").textContent="✓ Connected to GitHub";
-  $("connection").className="muted";
+  const elapsed = parseDuration(
+    data.elapsed ??
+    data.elapsed_runtime
+  );
 
-  $("updated").textContent=
-   "Last dashboard refresh: "+new Date().toLocaleString();
+  if (elapsed !== null) return elapsed;
 
- }catch(error){
+  if (data.started_at) {
+    const start = new Date(data.started_at).getTime();
 
-  $("connection").textContent="Connection error: "+error.message;
-  $("connection").className="error";
-
-  if(!statusData){
-   $("status").textContent="Unable to load status";
-   $("status").className="status red";
+    if (!isNaN(start)) {
+      return Math.max(0,(Date.now()-start)/1000);
+    }
   }
 
- }finally{
-
-  fetching=false;
-  button.disabled=false;
-  button.textContent="↻ Refresh now";
- }
+  return 0;
 }
 
-$("refreshButton").addEventListener("click",loadStatus);
+function getMaximum(data) {
+  const seconds = parseDuration(
+    data.max_runtime_seconds ??
+    data.maximum_runtime_seconds
+  );
 
+  if (seconds !== null) return seconds;
+
+  const duration = parseDuration(
+    data.max_runtime ??
+    data.maximum_runtime ??
+    data.maximum_runtime_hours
+  );
+
+  return duration !== null ? duration : 14400;
+}
+
+function setConnection(connected,message) {
+  document.getElementById("connectionText").textContent = message;
+  document.getElementById("connectionDot").style.background =
+    connected ? "#22c55e" : "#ef4444";
+}
+
+function updateStatus(data) {
+  session = data;
+
+  const status = String(data.status || "UNKNOWN").toUpperCase();
+
+  const active = status === "ACTIVE" || status === "RUNNING";
+  const stopped = ["STOPPED","COMPLETED","CANCELLED","CANCELED","FAILED"].includes(status);
+
+  const badge = document.getElementById("statusBadge");
+
+  badge.className = "status " +
+    (active ? "" : stopped ? "stopped" : "unknown");
+
+  badge.innerHTML = "<span>●</span> " + status;
+
+  document.getElementById("sessionId").textContent =
+    data.session_id || "--";
+
+  document.getElementById("started").textContent =
+    formatDate(data.started_at);
+
+  document.getElementById("heartbeat").textContent =
+    formatDate(data.last_heartbeat);
+
+  document.getElementById("updated").textContent =
+    formatDate(data.last_updated);
+
+  maxSeconds = getMaximum(data);
+  elapsedAtFetch = getElapsed(data);
+  fetchTime = Date.now();
+
+  document.getElementById("maximum").textContent =
+    formatTime(maxSeconds);
+
+  renderTimer();
+
+  document.getElementById("lastFetch").textContent =
+    "Last successful refresh: " + new Date().toLocaleTimeString();
+}
+
+function renderTimer() {
+  if (!session) return;
+
+  const active = ["ACTIVE","RUNNING"].includes(
+    String(session.status).toUpperCase()
+  );
+
+  const elapsed = active
+    ? elapsedAtFetch + (Date.now()-fetchTime)/1000
+    : elapsedAtFetch;
+
+  const remaining = Math.max(0,maxSeconds-elapsed);
+
+  document.getElementById("elapsed").textContent =
+    formatTime(elapsed);
+
+  document.getElementById("remaining").textContent =
+    formatTime(remaining);
+
+  const percent = maxSeconds > 0
+    ? Math.min(100,(elapsed/maxSeconds)*100)
+    : 0;
+
+  document.getElementById("progressText").textContent =
+    percent.toFixed(1) + "%";
+
+  document.getElementById("progressFill").style.width =
+    percent + "%";
+
+  if (remaining <= 0 && active) {
+    document.getElementById("remaining").style.color = "#ef4444";
+  } else {
+    document.getElementById("remaining").style.color = "#22c55e";
+  }
+}
+
+async function loadStatus() {
+  const btn = document.getElementById("refreshBtn");
+
+  btn.disabled = true;
+  btn.textContent = "↻ Loading...";
+
+  try {
+    const response = await fetch(
+      STATUS_URL + "?t=" + Date.now(),
+      {cache:"no-store"}
+    );
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+      throw new Error("Invalid status.json format");
+    }
+
+    updateStatus(data);
+    setConnection(true,"Connected");
+
+  } catch(error) {
+    console.error("Status refresh failed:",error);
+
+    setConnection(false,"Connection error");
+
+    document.getElementById("lastFetch").textContent =
+      "Unable to load status.json: " + error.message;
+
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "↻ Refresh";
+  }
+}
+
+// Refresh live timer every second.
+setInterval(renderTimer,1000);
+
+// Load immediately when the website opens.
 loadStatus();
 
-setInterval(loadStatus,10000);
-setInterval(renderDashboard,1000);
-
-document.addEventListener("visibilitychange",()=>{
- if(!document.hidden) loadStatus();
-});
-
-window.addEventListener("pageshow",loadStatus);
+// Automatically retrieve fresh status every 10 seconds.
+refreshTimer = setInterval(loadStatus,REFRESH_INTERVAL);
 
 </script>
 </body>
