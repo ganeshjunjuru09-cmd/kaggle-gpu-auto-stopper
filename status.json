@@ -2,10 +2,10 @@
   "status": "ACTIVE",
   "session_id": "58f5e48b",
   "started_at": "2026-11-16T18:03:44.300441+00:00",
-  "last_heartbeat": "2026-11-16T21:35:50.139554+00:00",
-  "last_updated": "2026-11-16T21:35:50.139554+00:00",
-  "elapsed_seconds": 12725,
-  "remaining_seconds": 1675,
+  "last_heartbeat": "2026-11-16T21:36:01.767601+00:00",
+  "last_updated": "2026-11-16T21:36:01.767601+00:00",
+  "elapsed_seconds": 12737,
+  "remaining_seconds": 1663,
   "max_runtime_seconds": 14400,
   "runtime_limit_reached": false
 }
