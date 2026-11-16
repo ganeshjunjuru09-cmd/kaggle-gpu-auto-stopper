@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kaggle GPU Runtime Monitor</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101827;color:#f1f5f9;font-family:Arial,sans-serif;padding:24px}
+main{max-width:650px;margin:40px auto}
+h1{font-size:26px}
+.card{background:#1e293b;padding:22px;border-radius:16px;margin-top:18px}
+.status{font-size:22px;font-weight:bold}
+.green{color:#4ade80}.red{color:#fb7185}
+.muted{color:#94a3b8;font-size:13px}
+.value{font-size:19px;margin:8px 0 18px;overflow-wrap:anywhere}
+.track{height:12px;background:#334155;border-radius:20px;overflow:hidden}
+.bar{height:100%;width:0;background:#38bdf8;transition:width .3s}
+button{background:#2563eb;color:white;border:0;padding:11px 16px;border-radius:8px;margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+<h1>⚡ Kaggle GPU Runtime Monitor</h1>
+<p class="muted">External dashboard · Automatically refreshes every 10 seconds</p>
+<div class="card">
+ <div class="muted">SESSION STATUS</div>
+ <div id="status" class="status">Loading...</div>
+ <p class="muted">SESSION ID</p>
+ <div id="session" class="value">—</div>
+ <p class="muted">STARTED AT</p>
+ <div id="started" class="value">—</div>
+ <p class="muted">LAST HEARTBEAT</p>
+ <div id="heartbeat" class="value">—</div>
+</div>
+<div class="card">
+ <div class="muted">ELAPSED RUNTIME</div>
+ <div id="elapsed" class="value">—</div>
+ <div class="track"><div id="bar" class="bar"></div></div>
+ <p class="muted">TIME REMAINING</p>
+ <div id="remaining" class="value">—</div>
+ <p class="muted">MAXIMUM RUNTIME</p>
+ <div id="maximum" class="value">4 hours</div>
+</div>
+<p id="updated" class="muted">Waiting for data...</p>
+<button onclick="loadStatus()">Refresh now</button>
+</main>
+<script>
+function duration(seconds){
+ if(!Number.isFinite(seconds)) return "—";
+ seconds=Math.max(0,Math.floor(seconds));
+ const h=Math.floor(seconds/3600);
+ const m=Math.floor((seconds%3600)/60);
+ const s=seconds%60;
+ return `${h}h ${m}m ${s}s`;
+}
+async function loadStatus(){
+ try{
+  const response=await fetch("./status.json?t="+Date.now());
+  if(!response.ok) throw new Error("Status file unavailable");
+  const d=await response.json();
+  const active=String(d.status||"").toLowerCase().includes("running");
+  document.getElementById("status").textContent=d.status||"Unknown";
+  document.getElementById("status").className="status "+(active?"green":"red");
+  document.getElementById("session").textContent=d.session_id||"No active session";
+  document.getElementById("started").textContent=d.started_at||"—";
+  document.getElementById("heartbeat").textContent=d.last_heartbeat||"—";
+  document.getElementById("elapsed").textContent=duration(d.elapsed_seconds);
+  document.getElementById("remaining").textContent=duration(d.remaining_seconds);
+  document.getElementById("maximum").textContent=(d.maximum_runtime_hours??4)+" hours";
+  const max=(Number(d.maximum_runtime_hours)||4)*3600;
+  const pct=Math.min(100,Math.max(0,(Number(d.elapsed_seconds)||0)/max*100));
+  document.getElementById("bar").style.width=pct+"%";
+  document.getElementById("updated").textContent="Last dashboard refresh: "+new Date().toLocaleString();
+ }catch(e){
+  document.getElementById("status").textContent="Waiting for Kaggle data";
+  document.getElementById("updated").textContent=e.message;
+ }
+}
+loadStatus();
+setInterval(loadStatus,10000);
+</script>
+</body>
+</html>
