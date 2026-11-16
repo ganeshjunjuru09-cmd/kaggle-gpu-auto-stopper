@@ -2,9 +2,9 @@
   "status": "ACTIVE",
   "session_id": "6dc5fb60",
   "started_at": "2026-11-16T12:06:44+00:00",
-  "last_heartbeat": "2026-11-16T12:42:30.263292+00:00",
-  "last_updated": "2026-11-16T12:42:30.263292+00:00",
-  "elapsed_seconds": 2146,
-  "remaining_seconds": 12253,
+  "last_heartbeat": "2026-11-16T12:45:16.991221+00:00",
+  "last_updated": "2026-11-16T12:45:16.991221+00:00",
+  "elapsed_seconds": 2312,
+  "remaining_seconds": 12087,
   "maximum_runtime_hours": 4
 }
