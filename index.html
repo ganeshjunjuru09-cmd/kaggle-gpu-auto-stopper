@@ -4,9 +4,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kaggle GPU Runtime Dashboard</title>
+<meta name="theme-color" content="#0b1220">
+
+<title>Kaggle GPU Dashboard</title>
 
 <style>
+:root {
+    --bg: #0b1220;
+    --card: #151f30;
+    --card2: #0d1727;
+    --border: #263449;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --green: #22c55e;
+    --blue: #3b82f6;
+    --yellow: #facc15;
+    --red: #ef4444;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -14,42 +29,73 @@
 body {
     margin: 0;
     padding: 20px;
-    background: #0b1220;
-    color: #f1f5f9;
-    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, Arial, sans-serif;
 }
 
 main {
-    max-width: 850px;
-    margin: 30px auto;
+    max-width: 900px;
+    margin: 25px auto;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
     flex-wrap: wrap;
+    gap: 15px;
     margin-bottom: 22px;
 }
 
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: #1e3a5f;
+    font-size: 24px;
+}
+
 h1 {
-    font-size: 25px;
     margin: 0;
+    font-size: 24px;
 }
 
 .subtitle {
-    color: #94a3b8;
-    font-size: 13px;
-    margin-top: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+button {
+    border: 0;
+    border-radius: 9px;
+    padding: 12px 17px;
+    background: var(--blue);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: wait;
 }
 
 .card {
-    background: #151f30;
-    border: 1px solid #263449;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 22px;
-    margin-bottom: 16px;
+    padding: 23px;
+    margin-bottom: 17px;
 }
 
 .status-row {
@@ -61,21 +107,17 @@ h1 {
 }
 
 .status {
-    font-weight: bold;
-    font-size: 14px;
-    padding: 9px 13px;
+    padding: 9px 14px;
     border-radius: 30px;
+    font-size: 12px;
+    font-weight: bold;
     background: #334155;
+    color: #cbd5e1;
 }
 
 .active {
     background: #064e3b;
     color: #4ade80;
-}
-
-.stopped {
-    background: #334155;
-    color: #cbd5e1;
 }
 
 .warning {
@@ -88,119 +130,142 @@ h1 {
     color: #fca5a5;
 }
 
+.stopped {
+    background: #334155;
+    color: #cbd5e1;
+}
+
 .stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    gap: 15px;
     margin-top: 25px;
 }
 
 .stat {
-    background: #0d1727;
-    padding: 18px;
-    border-radius: 12px;
+    background: var(--card2);
+    border: 1px solid #1e293b;
+    padding: 20px;
+    border-radius: 13px;
     min-width: 0;
 }
 
 .stat small {
-    color: #94a3b8;
+    color: var(--muted);
     font-size: 11px;
     letter-spacing: 1px;
 }
 
 .stat h2 {
-    font-size: clamp(21px, 5vw, 30px);
-    margin: 12px 0 0;
+    font-size: clamp(23px, 5vw, 34px);
+    margin: 13px 0 0;
+    font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
 }
 
 .progress-bg {
     height: 12px;
     background: #334155;
-    border-radius: 20px;
+    border-radius: 30px;
     overflow: hidden;
-    margin-top: 18px;
+    margin-top: 25px;
 }
 
 .progress {
     height: 100%;
     width: 0%;
-    background: #22c55e;
-    transition: width .3s;
+    background: var(--green);
+    border-radius: 30px;
+    transition: width .4s ease;
 }
 
 .progress-label {
     display: flex;
     justify-content: space-between;
-    color: #94a3b8;
+    gap: 10px;
+    color: var(--muted);
     font-size: 12px;
     margin-top: 10px;
 }
 
 .details {
     display: grid;
-    grid-template-columns: 130px 1fr;
-    gap: 12px;
+    grid-template-columns: 145px minmax(0, 1fr);
+    gap: 17px 12px;
+    margin-top: 23px;
     font-size: 13px;
-    margin-top: 20px;
 }
 
-.details span:nth-child(odd) {
-    color: #94a3b8;
+.details .key {
+    color: var(--muted);
 }
 
-.details span:nth-child(even) {
+.details .value {
     overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
 }
 
-button {
-    border: 0;
-    border-radius: 9px;
-    padding: 11px 16px;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-    background: #2563eb;
+.connection {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-top: 20px;
+    padding: 13px;
+    background: var(--card2);
+    border-radius: 10px;
+    font-size: 12px;
 }
 
-button:disabled {
-    opacity: .5;
-    cursor: not-allowed;
+.connection-indicator {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 6px;
 }
 
-.secondary {
-    background: #334155;
-}
-
-.notice {
-    color: #94a3b8;
+.message {
+    margin-top: 16px;
     font-size: 12px;
     line-height: 1.6;
-    margin-top: 18px;
+    color: var(--muted);
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: bold;
 }
 
 .footer {
     text-align: center;
+    padding: 20px;
     color: #64748b;
     font-size: 12px;
-    padding: 15px;
 }
 
-@media(max-width: 500px) {
+@media(max-width: 520px) {
     body {
-        padding: 13px;
+        padding: 12px;
     }
 
     main {
-        margin: 15px auto;
+        margin: 12px auto;
     }
 
     h1 {
-        font-size: 21px;
+        font-size: 20px;
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
     }
 
     .card {
-        padding: 17px;
+        padding: 16px;
+        border-radius: 13px;
     }
 
     .stats {
@@ -212,8 +277,13 @@ button:disabled {
     }
 
     .details {
-        grid-template-columns: 105px 1fr;
+        grid-template-columns: 110px minmax(0, 1fr);
+        gap: 14px 8px;
         font-size: 12px;
+    }
+
+    button {
+        padding: 11px 13px;
     }
 }
 </style>
@@ -223,25 +293,34 @@ button:disabled {
 
 <main>
 
-    <div class="header">
-        <div>
-            <h1>⚡ Kaggle GPU Monitor</h1>
-            <div class="subtitle">
-                External runtime dashboard · Automatic refresh
+    <header class="header">
+
+        <div class="brand">
+            <div class="logo">⚡</div>
+
+            <div>
+                <h1>Kaggle GPU Monitor</h1>
+                <div class="subtitle">
+                    External Runtime Dashboard
+                </div>
             </div>
         </div>
 
-        <button onclick="loadStatus()" id="refreshButton">
+        <button id="refreshButton" onclick="loadStatus()">
             ↻ Refresh
         </button>
-    </div>
+
+    </header>
+
+    <!-- MAIN STATUS -->
 
     <section class="card">
 
         <div class="status-row">
             <strong>SESSION STATUS</strong>
+
             <span class="status warning" id="status">
-                CONNECTING...
+                CONNECTING
             </span>
         </div>
 
@@ -265,73 +344,109 @@ button:disabled {
 
         <div class="progress-label">
             <span id="progressText">Waiting for data</span>
-            <span id="percentage">0%</span>
+            <strong id="percentage">0%</strong>
         </div>
 
     </section>
+
+    <!-- SESSION INFORMATION -->
 
     <section class="card">
 
-        <strong>SESSION INFORMATION</strong>
-
-        <div class="details">
-            <span>Session ID</span>
-            <span id="sessionId">--</span>
-
-            <span>Started at</span>
-            <span id="started">--</span>
-
-            <span>Last heartbeat</span>
-            <span id="heartbeat">--</span>
-
-            <span>Last updated</span>
-            <span id="updated">--</span>
-
-            <span>Maximum runtime</span>
-            <span id="maximum">4 hours</span>
-
-            <span>Connection age</span>
-            <span id="connectionAge">--</span>
+        <div class="section-title">
+            SESSION INFORMATION
         </div>
 
-        <div class="notice" id="message">
-            Connecting to your Kaggle runtime data...
+        <div class="details">
+
+            <span class="key">Session ID</span>
+            <span class="value" id="sessionId">--</span>
+
+            <span class="key">Started at</span>
+            <span class="value" id="started">--</span>
+
+            <span class="key">Last heartbeat</span>
+            <span class="value" id="heartbeat">--</span>
+
+            <span class="key">Last updated</span>
+            <span class="value" id="updated">--</span>
+
+            <span class="key">Maximum runtime</span>
+            <span class="value" id="maximum">4 hours</span>
+
+            <span class="key">Heartbeat age</span>
+            <span class="value" id="heartbeatAge">--</span>
+
+        </div>
+
+        <div class="connection">
+            <span>
+                <span class="connection-indicator" id="connectionDot"></span>
+                Data connection
+            </span>
+
+            <strong id="connectionStatus">Connecting</strong>
+        </div>
+
+        <div class="message" id="message">
+            Connecting to Kaggle session information...
         </div>
 
     </section>
 
-    <div class="footer">
-        Kaggle GPU Runtime Dashboard · Auto-refresh every 10 seconds
-    </div>
+    <footer class="footer">
+        Kaggle GPU Runtime Monitor · Automatic refresh every second
+    </footer>
 
 </main>
 
 <script>
-const STATUS_URL = "./status.json";
 
-const REFRESH_INTERVAL = 10000;
+// ==========================================
+// CONFIGURATION
+// ==========================================
+
+const STATUS_URL =
+"https://raw.githubusercontent.com/ganeshjunjuru09-cmd/kaggle-gpu-auto-stopper/main/status.json";
+
+const REFRESH_INTERVAL = 1000;
+
+// Consider heartbeat stale after 120 seconds
 const HEARTBEAT_TIMEOUT = 120000;
 
 let currentData = null;
-let lastFetchTime = null;
+let fetchInProgress = false;
+let lastSuccessfulFetch = null;
+
+
+// ==========================================
+// HELPERS
+// ==========================================
 
 function formatDuration(seconds) {
+
     if (!Number.isFinite(seconds) || seconds < 0) {
         return "--:--:--";
     }
 
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
+    const hours = Math.floor(seconds / 3600);
+
+    const minutes = Math.floor(
+        (seconds % 3600) / 60
+    );
+
+    const secs = Math.floor(seconds % 60);
 
     return [
-        String(h).padStart(2, "0"),
-        String(m).padStart(2, "0"),
-        String(s).padStart(2, "0")
+        String(hours).padStart(2, "0"),
+        String(minutes).padStart(2, "0"),
+        String(secs).padStart(2, "0")
     ].join(":");
 }
 
+
 function formatDate(value) {
+
     if (!value) return "--";
 
     const date = new Date(value);
@@ -341,39 +456,76 @@ function formatDate(value) {
     return date.toLocaleString();
 }
 
-function getSeconds(value) {
+
+function heartbeatAgeSeconds(value) {
+
     if (!value) return null;
 
     const timestamp = new Date(value).getTime();
 
     if (!Number.isFinite(timestamp)) return null;
 
-    return Math.max(0, (Date.now() - timestamp) / 1000);
+    return Math.max(
+        0,
+        (Date.now() - timestamp) / 1000
+    );
 }
 
+
+// ==========================================
+// STATUS DISPLAY
+// ==========================================
+
 function setStatus(label, className, message) {
+
     const element = document.getElementById("status");
 
     element.textContent = label;
+
     element.className = "status " + className;
 
-    document.getElementById("message").textContent = message;
+    document.getElementById("message").textContent =
+        message;
 }
 
-function displayStatus(data) {
-    const status = String(data.status || "UNKNOWN").toUpperCase();
 
-    const elapsed = Number(
+function updateConnection(connected) {
+
+    document.getElementById(
+        "connectionStatus"
+    ).textContent = connected ? "Connected" : "Unavailable";
+
+    document.getElementById(
+        "connectionDot"
+    ).style.background = connected
+        ? "#22c55e"
+        : "#ef4444";
+}
+
+
+// ==========================================
+// RENDER DASHBOARD
+// ==========================================
+
+function renderDashboard(data) {
+
+    const status = String(
+        data.status || "UNKNOWN"
+    ).toUpperCase();
+
+    const elapsedFromServer = Number(
         data.elapsed_seconds ?? 0
     );
 
-    const maxRuntime = Number(
+    const maximum = Number(
         data.max_runtime_seconds || 14400
     );
 
-    const heartbeatAge = getSeconds(data.last_heartbeat);
+    const heartbeatAge = heartbeatAgeSeconds(
+        data.last_heartbeat
+    );
 
-    const explicitlyStopped = [
+    const isStopped = [
         "STOPPED",
         "COMPLETED",
         "CANCELLED",
@@ -381,156 +533,229 @@ function displayStatus(data) {
         "FAILED"
     ].includes(status);
 
-    const explicitlyActive = [
+    const isActive = [
         "ACTIVE",
         "RUNNING"
     ].includes(status);
 
-    const heartbeatFresh =
+    const freshHeartbeat =
         heartbeatAge !== null &&
         heartbeatAge <= HEARTBEAT_TIMEOUT;
 
-    let displayElapsed = elapsed;
+    let elapsed = elapsedFromServer;
 
-    if (explicitlyActive && heartbeatFresh && data.started_at) {
-        const startedTimestamp = new Date(data.started_at).getTime();
+    // Smooth live timer using the start timestamp
+    if (
+        isActive &&
+        freshHeartbeat &&
+        data.started_at
+    ) {
 
-        if (Number.isFinite(startedTimestamp)) {
-            displayElapsed = Math.max(
+        const startTimestamp = new Date(
+            data.started_at
+        ).getTime();
+
+        if (Number.isFinite(startTimestamp)) {
+
+            elapsed = Math.max(
                 elapsed,
-                (Date.now() - startedTimestamp) / 1000
+                (Date.now() - startTimestamp) / 1000
             );
         }
     }
 
-    displayElapsed = Math.min(displayElapsed, maxRuntime);
+    elapsed = Math.max(
+        0,
+        Math.min(elapsed, maximum)
+    );
 
     const remaining = Math.max(
         0,
-        maxRuntime - displayElapsed
+        maximum - elapsed
     );
 
     const percentage = Math.min(
         100,
-        (displayElapsed / maxRuntime) * 100
+        (elapsed / maximum) * 100
     );
 
-    document.getElementById("elapsed").textContent =
-        formatDuration(displayElapsed);
+    // Runtime
+    document.getElementById(
+        "elapsed"
+    ).textContent = formatDuration(elapsed);
 
-    document.getElementById("remaining").textContent =
-        formatDuration(remaining);
+    document.getElementById(
+        "remaining"
+    ).textContent = formatDuration(remaining);
 
-    document.getElementById("progress").style.width =
-        percentage + "%";
+    // Progress
+    document.getElementById(
+        "progress"
+    ).style.width = percentage + "%";
 
-    document.getElementById("percentage").textContent =
-        percentage.toFixed(1) + "%";
+    document.getElementById(
+        "percentage"
+    ).textContent = percentage.toFixed(1) + "%";
 
-    document.getElementById("progressText").textContent =
-        "Runtime limit used";
+    document.getElementById(
+        "progressText"
+    ).textContent = "Four-hour runtime limit used";
 
-    document.getElementById("sessionId").textContent =
-        data.session_id || "--";
+    // Session details
+    document.getElementById(
+        "sessionId"
+    ).textContent = data.session_id || "--";
 
-    document.getElementById("started").textContent =
-        formatDate(data.started_at);
+    document.getElementById(
+        "started"
+    ).textContent = formatDate(data.started_at);
 
-    document.getElementById("heartbeat").textContent =
-        formatDate(data.last_heartbeat);
+    document.getElementById(
+        "heartbeat"
+    ).textContent = formatDate(data.last_heartbeat);
 
-    document.getElementById("updated").textContent =
-        formatDate(data.last_updated || data.updated_at);
+    document.getElementById(
+        "updated"
+    ).textContent = formatDate(
+        data.last_updated || data.updated_at
+    );
 
-    document.getElementById("maximum").textContent =
-        formatDuration(maxRuntime);
+    document.getElementById(
+        "maximum"
+    ).textContent = formatDuration(maximum);
 
-    document.getElementById("connectionAge").textContent =
-        heartbeatAge === null
-            ? "Unavailable"
-            : Math.floor(heartbeatAge) + " seconds";
+    document.getElementById(
+        "heartbeatAge"
+    ).textContent = heartbeatAge === null
+        ? "Unavailable"
+        : Math.floor(heartbeatAge) + " seconds";
 
-    if (explicitlyStopped) {
+    // Status
+    if (isStopped) {
+
         setStatus(
             "STOPPED",
             "stopped",
-            "Kaggle has published a stopped or completed status."
+            "The status file reports that the session has stopped."
         );
-    }
-    else if (!heartbeatFresh) {
+
+    } else if (!freshHeartbeat) {
+
         setStatus(
-            "NO HEARTBEAT",
+            "CONNECTION LOST",
             "error",
-            "No recent heartbeat. The notebook may have stopped, or its connection to GitHub may have failed. Actual Kaggle status is unconfirmed."
+            "No recent heartbeat. Kaggle may have stopped, or publishing may have failed. Actual session state is unconfirmed."
         );
-    }
-    else if (explicitlyActive) {
+
+    } else if (isActive) {
+
         setStatus(
             "ACTIVE",
             "active",
-            "Kaggle is publishing recent runtime updates."
+            "Kaggle is sending recent heartbeat updates."
         );
-    }
-    else {
+
+    } else {
+
         setStatus(
             "UNKNOWN",
             "warning",
-            "The session status value is not recognized."
+            "The session status is not recognized."
         );
     }
+
 }
 
+
+// ==========================================
+// FETCH STATUS FILE
+// ==========================================
+
 async function loadStatus() {
-    const button = document.getElementById("refreshButton");
+
+    if (fetchInProgress) return;
+
+    fetchInProgress = true;
+
+    const button = document.getElementById(
+        "refreshButton"
+    );
 
     button.disabled = true;
-    button.textContent = "Loading...";
 
     try {
+
         const response = await fetch(
-            STATUS_URL + "?t=" + Date.now(),
-            { cache: "no-store" }
+            STATUS_URL + "?cache=" + Date.now(),
+            {
+                cache: "no-store"
+            }
         );
 
         if (!response.ok) {
-            throw new Error("HTTP " + response.status);
+            throw new Error(
+                "HTTP " + response.status
+            );
         }
 
         const data = await response.json();
 
         currentData = data;
-        lastFetchTime = Date.now();
 
-        displayStatus(data);
+        lastSuccessfulFetch = Date.now();
+
+        updateConnection(true);
+
+        renderDashboard(data);
 
     } catch (error) {
+
+        console.error(
+            "Status fetch error:",
+            error
+        );
+
+        updateConnection(false);
 
         setStatus(
             "DATA UNAVAILABLE",
             "error",
-            "Could not load status.json. Check your GitHub Pages deployment and status file."
+            "Unable to read status.json. Check your GitHub repository and network connection."
         );
-
-        console.error(error);
 
     } finally {
 
+        fetchInProgress = false;
+
         button.disabled = false;
-        button.textContent = "↻ Refresh";
     }
 }
 
-function updateDisplay() {
+
+// ==========================================
+// LIVE DISPLAY
+// ==========================================
+
+// Recalculate elapsed time between server updates
+setInterval(() => {
+
     if (currentData) {
-        displayStatus(currentData);
+        renderDashboard(currentData);
     }
-}
+
+}, 1000);
+
+
+// ==========================================
+// AUTOMATIC FETCH
+// ==========================================
 
 loadStatus();
 
-setInterval(loadStatus, REFRESH_INTERVAL);
-
-setInterval(updateDisplay, 1000);
+setInterval(
+    loadStatus,
+    REFRESH_INTERVAL
+);
 
 </script>
 
