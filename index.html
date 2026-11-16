@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1220">
+
 <title>Kaggle GPU Monitor</title>
 
 <style>
@@ -87,7 +88,6 @@ button {
     font-size:13px;
     cursor:pointer;
     white-space:nowrap;
-    transition:background .2s;
 }
 
 button:hover {
@@ -292,10 +292,6 @@ button:disabled {
         gap:14px 8px;
         font-size:12px;
     }
-
-    .status {
-        font-size:11px;
-    }
 }
 
 @media(max-width:350px) {
@@ -343,6 +339,7 @@ button:disabled {
     </div>
 
     <div class="stats">
+
         <div class="stat">
             <small>ELAPSED RUNTIME</small>
             <h2 id="elapsed">--:--:--</h2>
@@ -352,6 +349,7 @@ button:disabled {
             <small>TIME REMAINING</small>
             <h2 id="remaining">--:--:--</h2>
         </div>
+
     </div>
 
     <div class="progress-bg">
@@ -441,6 +439,7 @@ let lastFetchFailed = false;
 // ==========================================
 
 function formatDuration(seconds) {
+
     if (!Number.isFinite(seconds)) return "--:--:--";
 
     seconds = Math.max(0, Math.floor(seconds));
@@ -455,6 +454,7 @@ function formatDuration(seconds) {
 }
 
 function formatDate(value) {
+
     if (!value) return "--";
 
     const date = new Date(value);
@@ -465,6 +465,7 @@ function formatDate(value) {
 }
 
 function validTimestamp(value) {
+
     if (!value) return null;
 
     const timestamp = new Date(value).getTime();
@@ -473,6 +474,7 @@ function validTimestamp(value) {
 }
 
 function heartbeatAgeSeconds(value) {
+
     const timestamp = validTimestamp(value);
 
     if (timestamp === null) return null;
@@ -481,6 +483,7 @@ function heartbeatAgeSeconds(value) {
 }
 
 function setText(id, value) {
+
     const element = document.getElementById(id);
 
     if (element) element.textContent = value;
@@ -492,14 +495,18 @@ function setText(id, value) {
 // ==========================================
 
 function updateConnection(connected) {
-    setText("connectionStatus",
-        connected ? "Connected" : "Unavailable");
+
+    setText(
+        "connectionStatus",
+        connected ? "Connected" : "Unavailable"
+    );
 
     document.getElementById("connectionDot").style.background =
         connected ? "#22c55e" : "#ef4444";
 }
 
 function setStatus(label, className, message) {
+
     const element = document.getElementById("status");
 
     element.textContent = label;
@@ -510,7 +517,7 @@ function setStatus(label, className, message) {
 
 
 // ==========================================
-// SINGLE DASHBOARD RENDER FUNCTION
+// DASHBOARD RENDERER
 // ==========================================
 
 function displayStatus(data) {
@@ -519,11 +526,11 @@ function displayStatus(data) {
 
     const status = String(data.status || "UNKNOWN").toUpperCase();
 
-    const maximumValue = Number(data.max_runtime_seconds);
+    const maxValue = Number(data.max_runtime_seconds);
 
-    const maximum = Number.isFinite(maximumValue) &&
-        maximumValue > 0
-        ? maximumValue
+    const maximum =
+        Number.isFinite(maxValue) && maxValue > 0
+        ? maxValue
         : DEFAULT_MAX_RUNTIME;
 
     const heartbeatAge = heartbeatAgeSeconds(data.last_heartbeat);
@@ -551,8 +558,11 @@ function displayStatus(data) {
     const startTimestamp = validTimestamp(data.started_at);
 
     if (isActive && startTimestamp !== null) {
-        const calculatedElapsed =
-            Math.max(0, (Date.now() - startTimestamp) / 1000);
+
+        const calculatedElapsed = Math.max(
+            0,
+            (Date.now() - startTimestamp) / 1000
+        );
 
         elapsed = Math.max(elapsed, calculatedElapsed);
     }
@@ -591,73 +601,87 @@ function displayStatus(data) {
 
     setText("maximum", formatDuration(maximum));
 
-    setText("heartbeatAge",
+    setText(
+        "heartbeatAge",
         heartbeatAge === null
             ? "Unavailable"
             : formatDuration(heartbeatAge)
     );
 
-    setText("websiteSync",
+    setText(
+        "websiteSync",
         lastSuccessfulFetch
             ? new Date(lastSuccessfulFetch).toLocaleTimeString()
             : "--"
     );
 
-    // Connection failure takes priority over cached session status.
+    // Connection failure
 
     if (lastFetchFailed) {
+
         setStatus(
             "CONNECTION LOST",
             "error",
-            "Unable to retrieve the latest GitHub data. Displayed session information is the last successfully received snapshot."
+            "GitHub is unavailable. Displaying the last successfully retrieved session."
         );
+
         return;
     }
 
-    // Session state
+    // Session status
 
     if (isStopped) {
+
         setStatus(
             "STOPPED",
             "stopped",
             "GitHub reports that this Kaggle session has stopped."
         );
+
         return;
     }
 
     if (isActive && heartbeatAge === null) {
+
         setStatus(
             "UNCONFIRMED",
             "warning",
             "The session reports ACTIVE, but a valid heartbeat is missing."
         );
+
         return;
     }
 
     if (isActive && heartbeatAge > HEARTBEAT_TIMEOUT) {
+
         setStatus(
             "STALE HEARTBEAT",
             "warning",
-            "The heartbeat is older than two minutes. The actual Kaggle session state cannot be confirmed."
+            "Heartbeat is older than two minutes. Actual Kaggle session status is unconfirmed."
         );
+
         return;
     }
 
     if (isActive && elapsed >= maximum) {
+
         setStatus(
             "LIMIT REACHED",
             "warning",
-            "The configured maximum runtime has been reached. Check Kaggle to confirm whether the runtime has stopped."
+            "Maximum runtime reached. Check Kaggle to confirm whether the session has stopped."
         );
+
         return;
     }
 
     if (isActive) {
+
         setStatus(
             "ACTIVE",
             "active",
             "Kaggle is publishing fresh runtime information."
         );
+
         return;
     }
 
@@ -682,6 +706,7 @@ async function loadStatus(manual = false) {
     const button = document.getElementById("refreshButton");
 
     if (manual) {
+
         button.disabled = true;
         button.textContent = "↻ Refreshing...";
     }
@@ -709,35 +734,41 @@ async function loadStatus(manual = false) {
             !data ||
             typeof data !== "object" ||
             Array.isArray(data) ||
-            !data.session_id
+            !data.session_id ||
+            !data.status
         ) {
-            throw new Error("Invalid status.json or missing session ID");
+            throw new Error("Invalid status.json");
         }
 
-        if (!data.status) {
-            throw new Error("Session status is missing");
+        // Detect session changes
+
+        if (String(data.session_id) !== lastSessionId) {
+
+            console.log(
+                "Kaggle session detected:",
+                data.session_id
+            );
         }
 
-        const sessionId = String(data.session_id);
-
-        if (sessionId !== lastSessionId) {
-            console.log("Session detected:", sessionId);
-            lastSessionId = sessionId;
-        }
+        // CRITICAL FIX:
+        // Update global state before rendering.
 
         currentData = data;
+        lastSessionId = String(data.session_id);
         lastSuccessfulFetch = Date.now();
         lastFetchFailed = false;
 
+        // Update connection
+
         updateConnection(true);
 
-        // Always render through the deployed function.
+        // Render the latest data.
 
         displayStatus(currentData);
 
         console.log(
-            "Dashboard synced:",
-            sessionId,
+            "Dashboard updated:",
+            data.session_id,
             data.status,
             new Date().toLocaleTimeString()
         );
@@ -751,12 +782,15 @@ async function loadStatus(manual = false) {
         updateConnection(false);
 
         if (currentData) {
+
             displayStatus(currentData);
+
         } else {
+
             setStatus(
                 "DATA UNAVAILABLE",
                 "error",
-                "Unable to retrieve GitHub status.json. Check your internet connection and repository URL."
+                "Unable to retrieve GitHub status.json. Check your network and repository."
             );
         }
 
@@ -775,11 +809,13 @@ async function loadStatus(manual = false) {
 // ==========================================
 
 document.getElementById("refreshButton")
-    .addEventListener("click", () => loadStatus(true));
+    .addEventListener("click", () => {
+        loadStatus(true);
+    });
 
 
 // ==========================================
-// LIVE TIMER
+// LIVE TIMER - EVERY SECOND
 // ==========================================
 
 setInterval(() => {
@@ -792,7 +828,7 @@ setInterval(() => {
 
 
 // ==========================================
-// AUTOMATIC REFRESH
+// AUTOMATIC GITHUB REFRESH - EVERY 10 SEC
 // ==========================================
 
 loadStatus();
