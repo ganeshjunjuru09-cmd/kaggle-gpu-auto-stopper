@@ -1,10 +1,6 @@
 {
-  "status": "Not running",
-  "session_id": null,
-  "started_at": null,
-  "maximum_runtime_hours": 4,
-  "elapsed_seconds": 0,
-  "remaining_seconds": 0,
-  "last_heartbeat": null,
-  "last_updated": null
+  "status": "ACTIVE",
+  "session_id": "6dc5fb60",
+  "last_updated": "2026-11-16T12:36:00.230832+00:00",
+  "maximum_runtime_hours": 4
 }
